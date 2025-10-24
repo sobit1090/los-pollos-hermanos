@@ -1,4 +1,4 @@
-import express from "express";
+ import express from "express";
 import {
   getAdminOrders,
   getMyOrders,
@@ -12,7 +12,7 @@ import { authorizeAdmin, isAuthenticated } from "../middlewares/auth.js";
 
 const router = express.Router();
 
-router.post("/createorder", isAuthenticated, placeOrder);
+router.post("/createorder",   placeOrder);
 
 router.post("/createorderonline", isAuthenticated, placeOrderOnline);
 
@@ -26,4 +26,4 @@ router.get("/order/:id", isAuthenticated, getOrderDetails);
 router.get("/admin/orders", isAuthenticated, authorizeAdmin, getAdminOrders);
 router.get("/admin/order/:id", isAuthenticated, authorizeAdmin, processOrder);
 
-export default router;
+ export default router;

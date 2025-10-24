@@ -28,7 +28,6 @@ const schema = new mongoose.Schema({
       required: true,
     },
   },
-
   orderItems: {
     cheeseBurger: {
       price: {
@@ -63,25 +62,23 @@ const schema = new mongoose.Schema({
       },
     },
   },
-
   user: {
     type: mongoose.Schema.ObjectId,
     ref: "User",
     required: true,
   },
-
   paymentMethod: {
     type: "String",
     enum: ["COD", "Online"],
     default: "COD",
   },
-
   paymentInfo: {
     type: mongoose.Schema.ObjectId,
     ref: "Payment",
   },
-  paidAt: Date,
-
+  paidAt: {
+    Date,
+  },
   itemsPrice: {
     type: Number,
     default: 0,
@@ -98,14 +95,14 @@ const schema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
-
   orderStatus: {
     type: String,
     enum: ["Preparing", "Shipped", "Delivered"],
     default: "Preparing",
   },
-
-  deliveredAt: Date,
+  deliveredAt: {
+    
+  },
   createdAt: {
     type: Date,
     default: Date.now,
