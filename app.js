@@ -1,5 +1,8 @@
 import express, { urlencoded } from "express";
 import dotenv from "dotenv";
+ 
+dotenv.config({ path: "./config/config.env" });
+
 import { connectPassport } from "./utils/Provider.js";
 import session from "express-session";
 import cookieParser from "cookie-parser";
