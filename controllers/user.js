@@ -27,7 +27,6 @@ export const registerUser = async (req, res) => {
     if (existingUser)
       return res.status(400).json({ message: "User already exists" });
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await User.create({
@@ -52,36 +51,34 @@ export const registerUser = async (req, res) => {
 };
 
 /**
- * ✅ Login user
+ * ✅ Login user with session
  */
-export const loginUser = async (req, res) => {
+export const loginUser = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
     if (!email || !password)
       return res.status(400).json({ message: "Email and password required" });
 
-    // Get user with password
     const user = await User.findOne({ email }).select("+password");
+    if (!user) return res.status(400).json({ message: "Invalid credentials" });
 
-    if (!user)
-      return res.status(400).json({ message: "User not found" });
-
-    // Compare password
     const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
 
-    if (!isMatch)
-      return res.status(400).json({ message: "Invalid credentials" });
+    // ✅ Establish session
+    req.login(user, { session: true }, (err) => {
+      if (err) return next(err);
 
-    // Successful login
-    return res.status(200).json({
-      success: true,
-      message: "Login successful",
-      user: {
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-      },
+      return res.status(200).json({
+        success: true,
+        message: "Login successful",
+        user: {
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+        },
+      });
     });
   } catch (error) {
     console.error("Login Error:", error);
@@ -93,21 +90,18 @@ export const loginUser = async (req, res) => {
  * ✅ Logout user
  */
 export const logout = (req, res, next) => {
-  req.session.destroy((err) => {
+  req.logout((err) => {
     if (err) return next(err);
 
-    res.clearCookie("connect.sid", {
-      path: "/",
-      httpOnly: true,
-      secure: process.env.NODE_ENV !== "development",
-      sameSite: process.env.NODE_ENV === "development" ? "lax" : "none",
+    req.session.destroy(() => {
+      res.clearCookie("connect.sid", {
+        path: "/",
+        httpOnly: true,
+        secure: process.env.NODE_ENV !== "development",
+        sameSite: process.env.NODE_ENV === "development" ? "lax" : "none",
+      });
+      return res.status(200).json({ success: true, message: "Logged out" });
     });
-
-    return res.redirect(
-      process.env.NODE_ENV === "development"
-        ? "http://localhost:5173/login"
-        : process.env.CLIENT_URL + "/login"
-    );
   });
 };
 
