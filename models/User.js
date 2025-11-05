@@ -1,17 +1,45 @@
 import mongoose from "mongoose";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 
 const schema = new mongoose.Schema({
-  name: { type: String, required: true },
-  email: { type: String, unique: true, required: true },
-  password: { type: String, select: false },
-  photo: { type: String, default: "" },
-  googleId: String,
+  name: {
+    type: String,
+    required: true,
+  },
+
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+
+  password: {
+    type: String,
+    required: true,
+    select: false, // hide by default when fetching user
+  },
+
+  phone: {
+    type: String,
+  },
+
+  photo: {
+    type: String, // store image URL (e.g. Cloudinary link)
+    default: "",
+  },
+
   role: {
     type: String,
     enum: ["admin", "user"],
     default: "user",
   },
+
+  googleId: {
+    type: String,
+    unique: true,
+    sparse: true, // optional, avoids duplicate index errors
+  },
+
   createdAt: {
     type: Date,
     default: Date.now,

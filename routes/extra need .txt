@@ -1,0 +1,3 @@
+import { updateProfile } from "../controllers/user.js";
+
+router.put("/updateProfile", isAuthenticated, updateProfile);

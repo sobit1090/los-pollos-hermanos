@@ -40,6 +40,9 @@ router.get("/logout", (req, res) => {
 
 // Admin Routes
 router.get("/admin/users", isAuthenticated, authorizeAdmin, getAdminUsers);
+import { updateProfile } from "../controllers/user.js";
+
+router.put("/updateProfile", isAuthenticated, updateProfile);
 
 router.get("/admin/stats", isAuthenticated, authorizeAdmin, getAdminStats);
 router.post("/register", registerUser);

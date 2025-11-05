@@ -1,0 +1,21 @@
+export const updateProfile = async (req, res) => {
+  try {
+    const { phone, photo } = req.body;
+    const user = await User.findById(req.user._id);
+
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    if (phone) user.phone = phone;
+    if (photo) user.photo = photo; // you can handle Cloudinary upload on frontend
+
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Profile updated successfully",
+      user,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

@@ -8,26 +8,37 @@ export const myProfile = (req, res, next) => {
     user: req.user,
   });
 };
+ 
+
 export const registerUser = async (req, res) => {
   try {
-    const { name, photo, googleId } = req.body;
+    const { name, email, password } = req.body;
 
-    if (!name || !googleId) {
-      return res.status(400).json({ success: false, message: "Name and Google ID are required" });
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: "All fields are required" });
     }
 
-    const existingUser = await User.findOne({ googleId });
+    const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ success: false, message: "User already exists" });
+      return res.status(400).json({ message: "User already exists" });
     }
 
-    const user = await User.create({ name, photo, googleId });
-    res.status(201).json({ success: true, user });
+    const user = await User.create({ name, email, password });
+
+    res.status(201).json({
+      success: true,
+      message: "Registration successful",
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+      },
+    });
   } catch (error) {
-    console.error("Error creating user:", error);
-    res.status(500).json({ success: false, message: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
+
 export const logout = (req, res, next) => {
   req.session.destroy((err) => {
     if (err) return next(err);
@@ -46,6 +57,27 @@ export const logout = (req, res, next) => {
         : process.env.CLIENT_URL + "/login"
     );
   });
+};
+export const updateProfile = async (req, res) => {
+  try {
+    const { phone, photo } = req.body;
+    const user = await User.findById(req.user._id);
+
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    if (phone) user.phone = phone;
+    if (photo) user.photo = photo; // you can handle Cloudinary upload on frontend
+
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Profile updated successfully",
+      user,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
 
