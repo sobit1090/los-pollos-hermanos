@@ -22,10 +22,7 @@ export const connectPassport = () => {
       {
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL:
-          process.env.NODE_ENV === "development"
-            ? "http://localhost:8080/api/v1/login"
-            : process.env.BACKEND_URL + "/api/v1/login",
+        callbackURL: process.env.GOOGLE_CALLBACK_URL,
       },
       async (accessToken, refreshToken, profile, done) => {
         try {
