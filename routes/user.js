@@ -18,8 +18,7 @@ const router = express.Router();
 // 1) Kick off Google OAuth
 router.get(
   "/googlelogin",
-  passport.authenticate("google", {
-    scope: ["profile", "email"], // keep email so you can store it
+  passport.authenticate("google", { scope: ["profile", "email"],// keep email so you can store it
     prompt: "select_account",
   })
 );
