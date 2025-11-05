@@ -34,11 +34,13 @@ const schema = new mongoose.Schema({
     default: "user",
   },
 
-  googleId: {
-    type: String,
-    unique: true,
-    sparse: true, // optional, avoids duplicate index errors
-  },
+ googleId: {
+  type: String,
+  unique: true,
+  sparse: true,
+  default: null,
+},
+
 
   createdAt: {
     type: Date,
