@@ -24,7 +24,7 @@ const schema = new mongoose.Schema({
   },
 
   photo: {
-    type: String, // store image URL (e.g. Cloudinary link)
+    type: String, 
     default: "",
   },
 

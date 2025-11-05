@@ -33,6 +33,7 @@ export const connectPassport = () => {
               name: profile.displayName,
               email: profile.emails?.[0]?.value || `user-${profile.id}@gmail.com`,
               googleId: profile.id,
+                photo: profile.photos?.[0]?.value || "",
               password: "google_authenticated_user"
             });
           }
