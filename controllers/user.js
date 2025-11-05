@@ -1,6 +1,7 @@
 import { asyncError } from "../middlewares/errorMiddleware.js";
 import { User } from "../models/User.js";
 import { Order } from "../models/Order.js";
+import bcrypt from "bcryptjs"; // or bcrypt if you use that
 
 export const myProfile = (req, res, next) => {
   res.status(200).json({
@@ -8,6 +9,8 @@ export const myProfile = (req, res, next) => {
     user: req.user,
   });
 };
+ 
+
  
 
 export const registerUser = async (req, res) => {
@@ -23,7 +26,10 @@ export const registerUser = async (req, res) => {
       return res.status(400).json({ message: "User already exists" });
     }
 
-    const user = await User.create({ name, email, password });
+    // ✅ Hash password before saving
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const user = await User.create({ name, email, password: hashedPassword });
 
     res.status(201).json({
       success: true,
@@ -38,8 +44,9 @@ export const registerUser = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
  
-import bcrypt from "bcryptjs"; // or bcrypt if you use that
+
 
 export const loginUser = async (req, res) => {
   try {
@@ -56,15 +63,21 @@ export const loginUser = async (req, res) => {
     if (!isMatch)
       return res.status(400).json({ message: "Invalid credentials" });
 
-    // If you use sessions:
-    req.session.user = user;
-
-    res.status(200).json({ success: true, user });
+    res.status(200).json({
+      success: true,
+      message: "Login successful",
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+      },
+    });
   } catch (error) {
-    console.error(error);
+    console.error("Login Error:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
+
 
 export const logout = (req, res, next) => {
   req.session.destroy((err) => {
