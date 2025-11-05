@@ -14,7 +14,13 @@ export default app;
 
 // Trust proxy for HTTPS cookies on Render
 app.enable("trust proxy");
-
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL,
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+  })
+);
 // Session (must be before passport.session())
 app.use(
   session({
@@ -34,13 +40,7 @@ app.use(express.json());
 app.use(urlencoded({ extended: true }));
 
 // ✅ CORS Configuration
-app.use(
-  cors({
-    origin: process.env.FRONTEND_URL,
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE"],
-  })
-);
+
 
 // ✅ Initialize Passport (Must be above Routes)
 connectPassport();
