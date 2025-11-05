@@ -38,6 +38,33 @@ export const registerUser = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+ 
+import bcrypt from "bcryptjs"; // or bcrypt if you use that
+
+export const loginUser = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password)
+      return res.status(400).json({ message: "Email and password required" });
+
+    const user = await User.findOne({ email });
+    if (!user)
+      return res.status(400).json({ message: "User not found" });
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch)
+      return res.status(400).json({ message: "Invalid credentials" });
+
+    // If you use sessions:
+    req.session.user = user;
+
+    res.status(200).json({ success: true, user });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
 
 export const logout = (req, res, next) => {
   req.session.destroy((err) => {

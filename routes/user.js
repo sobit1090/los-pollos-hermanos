@@ -24,6 +24,9 @@ router.get(
     successRedirect: process.env.FRONTEND_URL,
   })
 );
+import { loginUser } from "../controllers/user.js";
+
+router.post("/login", loginUser);
 
 router.get("/me", isAuthenticated, myProfile);
 router.get("/logout", (req, res) => {
