@@ -29,12 +29,7 @@ router.get("/me", isAuthenticated, myProfile);
 router.get("/logout", (req, res) => {
   const redirectUrl = req.query.redirect || "http://localhost:5173/login";
 
-<<<<<<< HEAD
-router.get("/logout", (req, res) => {
-  const redirectUrl = req.query.redirect || "http://localhost:5173/login";
-
-=======
->>>>>>> a1917be4de937077befdeabf15042d450d0fc93f
+ 
   req.logout(() => {
     req.session.destroy(() => {
       res.clearCookie("connect.sid");
@@ -42,10 +37,6 @@ router.get("/logout", (req, res) => {
     });
   });
 });
-<<<<<<< HEAD
-
-=======
->>>>>>> a1917be4de937077befdeabf15042d450d0fc93f
 
 // Admin Routes
 router.get("/admin/users", isAuthenticated, authorizeAdmin, getAdminUsers);
