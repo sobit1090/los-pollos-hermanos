@@ -46,13 +46,6 @@ const schema = new mongoose.Schema({
   },
 });
 
-// Hash password before saving
-schema.pre("save", async function (next) {
-  // if no password or not modified, skip hashing
-  if (!this.password || !this.isModified("password")) return next();
-  this.password = await bcrypt.hash(this.password, 10);
-  next();
-});
-
+ 
 
 export const User = mongoose.model("User", schema);
