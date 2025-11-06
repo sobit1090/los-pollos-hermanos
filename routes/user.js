@@ -23,6 +23,17 @@ router.get(
   })
 );
 
+
+
+
+import multer from "multer";
+const upload = multer({ dest: "uploads/" });
+
+router.put("/update-photo", upload.single("photo"), updatePhoto);
+
+
+
+
 // 2) OAuth callback (Google redirects here). We keep your original /login GET.
 router.get(
   "/login",

@@ -105,31 +105,60 @@ export const logout = (req, res, next) => {
   });
 };
 
+
+
+
+
+
+
+
+
+import cloudinary from "../utils/cloudinary.js";
+
+export const updatePhoto = async (req, res) => {
+  if (!req.file) return res.status(400).json({ message: "No file uploaded" });
+
+  const result = await cloudinary.uploader.upload(req.file.path);
+
+  req.user.photo = result.secure_url;
+  await req.user.save();
+
+  res.status(200).json({
+    success: true,
+    message: "Photo updated successfully!",
+    photo: result.secure_url,
+  });
+};
+
+
+
+
+
+
+
 /**
  * ✅ Update user profile
  */
-export const updateProfile = async (req, res) => {
+import cloudinary from "../utils/cloudinary.js";
+
+export const updatePhoto = async (req, res) => {
   try {
-    const { phone, photo } = req.body;
-    const user = await User.findById(req.user._id);
+    const result = await cloudinary.uploader.upload(req.file.path);
 
-    if (!user) return res.status(404).json({ message: "User not found" });
-
-    if (phone) user.phone = phone;
-    if (photo) user.photo = photo;
-
-    await user.save();
+    req.user.photo = result.secure_url;
+    await req.user.save();
 
     res.status(200).json({
       success: true,
-      message: "Profile updated successfully",
-      user,
+      message: "Photo uploaded successfully!",
+      photo: result.secure_url
     });
   } catch (error) {
-    console.error("Profile Update Error:", error);
-    res.status(500).json({ message: "Server error while updating profile" });
+    console.log("Photo upload error:", error);
+    res.status(500).json({ message: "Upload failed" });
   }
 };
+
 
 /**
  * ✅ Admin: Get all users
