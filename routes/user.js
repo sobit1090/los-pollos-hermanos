@@ -1,5 +1,9 @@
 import express from "express";
 import passport from "passport";
+import { isAuthenticated } from "../middlewares/auth.js";
+import { updatePhoto } from "../controllers/user.js";
+import { singleUpload } from "../middlewares/multer.js";
+
 import {
   getAdminStats,
   getAdminUsers,
@@ -26,10 +30,10 @@ router.get(
 
 
 
-import multer from "multer";
-const upload = multer({ dest: "uploads/" });
+ 
+ 
 
-router.put("/update-photo", upload.single("photo"), updatePhoto);
+router.put("/update/profile-photo", isAuthenticated, singleUpload, updatePhoto);
 
 
 

@@ -113,37 +113,14 @@ export const logout = (req, res, next) => {
 
 
 
-
-
-
-export const updatePhoto = async (req, res) => {
-  if (!req.file) return res.status(400).json({ message: "No file uploaded" });
-
-  const result = await cloudinary.uploader.upload(req.file.path);
-
-  req.user.photo = result.secure_url;
-  await req.user.save();
-
-  res.status(200).json({
-    success: true,
-    message: "Photo updated successfully!",
-    photo: result.secure_url,
-  });
-};
-
-
-
-
-
-
-
-/**
- * ✅ Update user profile
- */
-
-export const updatePhoto = async (req, res) => {
+ export const updatePhoto = async (req, res) => {
   try {
-    const result = await cloudinary.uploader.upload(req.file.path);
+    if (!req.file)
+      return res.status(400).json({ message: "No file uploaded" });
+
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      folder: "los-pollos-users", // ✅ keeps Cloudinary clean
+    });
 
     req.user.photo = result.secure_url;
     await req.user.save();
@@ -151,7 +128,7 @@ export const updatePhoto = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "Photo uploaded successfully!",
-      photo: result.secure_url
+      photo: result.secure_url,
     });
   } catch (error) {
     console.log("Photo upload error:", error);
@@ -160,6 +137,8 @@ export const updatePhoto = async (req, res) => {
 };
 
 
+
+ 
 /**
  * ✅ Admin: Get all users
  */
