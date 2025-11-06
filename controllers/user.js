@@ -14,7 +14,7 @@ export const myProfile = (req, res) => {
 };
 
 /**
- * ✅ Register new user
+ * ✅ Register new user (session will start after login, not here)
  */
 export const registerUser = async (req, res) => {
   try {
@@ -29,7 +29,7 @@ export const registerUser = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = await User.create({
+    await User.create({
       name,
       email,
       password: hashedPassword,
@@ -37,21 +37,17 @@ export const registerUser = async (req, res) => {
 
     return res.status(201).json({
       success: true,
-      message: "Registration successful",
-      user: {
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-      },
+      message: "Registration successful, now login",
     });
-  } catch (error) {
-    console.error("Registration Error:", error);
-    return res.status(500).json({ message: "Server error during registration" });
-  }
+} catch (error) {
+  console.error("Registration Error:", error.message);
+  return res.status(500).json({ message: error.message });
+}
+
 };
 
 /**
- * ✅ Login user with session
+ * ✅ Login user WITH session + cookie
  */
 export const loginUser = async (req, res, next) => {
   try {
@@ -66,22 +62,22 @@ export const loginUser = async (req, res, next) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
 
-    // ✅ Establish session
-    req.login(user, { session: true }, (err) => {
+    // ✅ Create login session
+    req.login(user, (err) => {
       if (err) return next(err);
 
-      return res.status(200).json({
-        success: true,
-        message: "Login successful",
-
-        user: {
-          _id: user._id,
-          name: user.name,
-          email: user.email,
-        },
-        
+      // ✅ Ensure the session cookie is saved before responding (CRITICAL)
+      req.session.save(() => {
+        return res.status(200).json({
+          success: true,
+          message: "Login successful",
+          user: {
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+          },
+        });
       });
-      
     });
   } catch (error) {
     console.error("Login Error:", error);
@@ -89,8 +85,9 @@ export const loginUser = async (req, res, next) => {
   }
 };
 
+
 /**
- * ✅ Logout user
+ * ✅ Logout user (destroy session & remove cookie)
  */
 export const logout = (req, res, next) => {
   req.logout((err) => {
@@ -100,8 +97,8 @@ export const logout = (req, res, next) => {
       res.clearCookie("connect.sid", {
         path: "/",
         httpOnly: true,
-        secure: process.env.NODE_ENV !== "development",
-        sameSite: process.env.NODE_ENV === "development" ? "lax" : "none",
+        secure: true,
+        sameSite: "none",
       });
       return res.status(200).json({ success: true, message: "Logged out" });
     });
