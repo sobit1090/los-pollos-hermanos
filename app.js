@@ -12,25 +12,28 @@ import { errorMiddleware } from "./middlewares/errorMiddleware.js";
 const app = express();
 export default app;
 
-// Trust proxy for HTTPS cookies on Render
+/* ✅ Allow HTTPS cookies on Render */
 app.enable("trust proxy");
+
+/* ✅ CORS Must Come Before Session */
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL,
+    origin: "https://los-pollos-hermanos-front.onrender.com", // Hard-coded frontend URL
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
   })
 );
-// Session (must be before passport.session())
+
+/* ✅ Session (Must be before passport.session()) */
 app.use(
   session({
-    secret: process.env.SESSION_SECRET,
+    secret: process.env.SESSION_SECRET || "secret",
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: process.env.NODE_ENV !== "development",
       httpOnly: true,
-      sameSite: process.env.NODE_ENV === "development" ? "lax" : "none",
+      secure: true,          // Required for HTTPS
+      sameSite: "none",      // Required for cross-site cookies
     },
   })
 );
@@ -39,20 +42,17 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(urlencoded({ extended: true }));
 
-// ✅ CORS Configuration
-
-
-// ✅ Initialize Passport (Must be above Routes)
+/* ✅ Initialize Passport */
 connectPassport();
 app.use(passport.initialize());
 app.use(passport.session());
 
-// ✅ Importing Routes
+/* ✅ Routes */
 import userRoute from "./routes/user.js";
 import orderRoute from "./routes/order.js";
 
 app.use("/api/v1", userRoute);
 app.use("/api/v1", orderRoute);
 
-// ✅ Error Handler
+/* ✅ Error Middleware */
 app.use(errorMiddleware);
