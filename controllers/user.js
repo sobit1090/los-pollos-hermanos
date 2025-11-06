@@ -121,7 +121,7 @@ export const logout = (req, res, next) => {
       return res.status(400).json({ message: "No file uploaded" });
 
     const result = await cloudinary.uploader.upload(req.file.path, {
-      folder: "los-pollos-users", // ✅ keeps Cloudinary clean
+      folder: "los-pollos-assets", // ✅ keeps Cloudinary clean
     });
 
     req.user.photo = result.secure_url;
