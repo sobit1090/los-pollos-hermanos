@@ -131,6 +131,7 @@ export const logout = (req, res, next) => {
       success: true,
       message: "Photo uploaded successfully!",
       photo: result.secure_url,
+ 
     });
   } catch (error) {
     console.log("Photo upload error:", error);
