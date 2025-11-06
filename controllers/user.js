@@ -2,6 +2,7 @@ import { asyncError } from "../middlewares/errorMiddleware.js";
 import { User } from "../models/User.js";
 import { Order } from "../models/Order.js";
 import bcrypt from "bcryptjs";
+import cloudinary from "../utils/cloudinary.js";
 
 /**
  * ✅ Get current logged-in user's profile
@@ -113,7 +114,7 @@ export const logout = (req, res, next) => {
 
 
 
-import cloudinary from "../utils/cloudinary.js";
+
 
 export const updatePhoto = async (req, res) => {
   if (!req.file) return res.status(400).json({ message: "No file uploaded" });
@@ -139,7 +140,6 @@ export const updatePhoto = async (req, res) => {
 /**
  * ✅ Update user profile
  */
-import cloudinary from "../utils/cloudinary.js";
 
 export const updatePhoto = async (req, res) => {
   try {
