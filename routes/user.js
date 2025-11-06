@@ -11,7 +11,7 @@ import {
   myProfile,
   loginUser,
   registerUser,
-  updateProfile,
+ 
 } from "../controllers/user.js";
 import { authorizeAdmin, isAuthenticated } from "../middlewares/auth.js";
 
@@ -64,7 +64,7 @@ router.post("/register", registerUser);
 
 router.get("/me", isAuthenticated, myProfile);
 router.get("/logout", logout);
-router.put("/updateProfile", isAuthenticated, updateProfile);
+ 
 
 /** -------------------- ADMIN -------------------- **/
 
