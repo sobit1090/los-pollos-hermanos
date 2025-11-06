@@ -1,6 +1,6 @@
 import express from "express";
 import passport from "passport";
-import { isAuthenticated } from "../middlewares/auth.js";
+ 
 import { updatePhoto } from "../controllers/user.js";
 import { singleUpload } from "../middlewares/multer.js";
 
