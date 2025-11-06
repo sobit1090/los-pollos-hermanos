@@ -25,7 +25,7 @@ const schema = new mongoose.Schema({
 
   photo: {
     type: String, 
-    default: "",
+    default: "https://res.cloudinary.com/dlkf5aiek/image/upload/v1762414012/j0g5hrsnkykpiuhfsyus.jpg",
   },
 
   role: {
