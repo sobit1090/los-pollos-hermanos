@@ -34,6 +34,10 @@ const schema = new mongoose.Schema({
     default: "user",
   },
 
+orders:{
+  type:Number,
+  default:0
+},
  googleId: {
   type: String,
  
