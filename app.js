@@ -51,10 +51,10 @@ app.use(session({
   saveUninitialized: false,
   store: MongoStore.create({
     mongoUrl: process.env.MONGO_URI,
-    ttl:   60, // seconds — session TTL 24 hours
+    ttl: 24 * 60 * 60, // seconds — session TTL 24 hours
   }),
   cookie: {
-    maxAge:   60 * 1000, // 24 hours in ms
+    maxAge:  24 * 60 * 60 * 1000, // 24 hours in ms
     httpOnly: true,
     secure:true, // true on HTTPS
     sameSite: "none",
