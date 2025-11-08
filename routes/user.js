@@ -1,6 +1,6 @@
 import express from "express";
 import passport from "passport";
-
+import { User } from "../models/User.js";
 import { updatePhoto } from "../controllers/user.js";
 import { singleUpload } from "../middlewares/multer.js";
 
