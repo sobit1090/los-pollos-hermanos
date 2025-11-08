@@ -1,6 +1,6 @@
 import express from "express";
 import passport from "passport";
- 
+
 import { updatePhoto } from "../controllers/user.js";
 import { singleUpload } from "../middlewares/multer.js";
 
@@ -11,7 +11,6 @@ import {
   myProfile,
   loginUser,
   registerUser,
- 
 } from "../controllers/user.js";
 import { authorizeAdmin, isAuthenticated } from "../middlewares/auth.js";
 
@@ -22,21 +21,13 @@ const router = express.Router();
 // 1) Kick off Google OAuth
 router.get(
   "/googlelogin",
-  passport.authenticate("google", { scope: ["profile", "email"],// keep email so you can store it
+  passport.authenticate("google", {
+    scope: ["profile", "email"], // keep email so you can store it
     prompt: "select_account",
   })
 );
 
-
-
-
- 
- 
-
 router.put("/update/profile-photo", isAuthenticated, singleUpload, updatePhoto);
-
-
-
 
 // 2) OAuth callback (Google redirects here). We keep your original /login GET.
 router.get(
@@ -64,7 +55,6 @@ router.post("/register", registerUser);
 
 router.get("/me", isAuthenticated, myProfile);
 router.get("/logout", logout);
- 
 
 /** -------------------- ADMIN -------------------- **/
 
@@ -74,8 +64,8 @@ router.delete("/admin/users/:id", async (req, res) => {
   try {
     await User.findByIdAndDelete(req.params.id);
     res.json({ success: true, message: "User deleted successfully" });
-  } catch (err) {
-    res.status(500).json({ success: false, message: "Failed to delete user" });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
   }
 });
 
