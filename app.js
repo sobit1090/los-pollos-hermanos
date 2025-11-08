@@ -25,18 +25,54 @@ app.use(
 );
 
 /* ✅ Session (Must be before passport.session()) */
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET || "secret",
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      httpOnly: true,
-      secure: true,          // Required for HTTPS
-      sameSite: "none",      // Required for cross-site cookies
-    },
-  })
-);
+// app.use(
+//   session({
+//     secret: process.env.SESSION_SECRET || "secret",
+//     resave: false,
+//     saveUninitialized: false,
+//     cookie: {
+//       httpOnly: true,
+//       secure: true,          // Required for HTTPS
+//       sameSite: "none",      // Required for cross-site cookies
+//     },
+//   })
+// );
+
+
+// server.js (Express)
+ 
+import MongoStore from "connect-mongo"; // or connect-redis for Redis
+
+ 
+app.use(session({
+  name: "sid",
+  secret: process.env.SESSION_SECRET || "replace_me",
+  resave: false,
+  saveUninitialized: false,
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGODB_URI,
+    ttl:   60, // seconds — session TTL 24 hours
+  }),
+  cookie: {
+    maxAge:   60 * 1000, // 24 hours in ms
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production", // true on HTTPS
+    sameSite: "lax",
+  },
+}));
+
+// Logout route (explicit logout)
+app.post("/api/auth/logout", (req, res) => {
+  req.session.destroy(err => {
+    res.clearCookie("sid");
+    if (err) return res.status(500).send("Logout error");
+    res.send({ success: true });
+  });
+});
+
+
+
+
 
 app.use(cookieParser());
 app.use(express.json());
