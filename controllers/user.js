@@ -59,7 +59,9 @@ export const loginUser = async (req, res, next) => {
 
     const user = await User.findOne({ email }).select("+password");
     if (!user) return res.status(400).json({ message: "Invalid credentials" });
-
+if (user.status === "Suspended") {
+  return res.status(403).json({ message: "Your account is suspended. Contact support." });
+}
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
 

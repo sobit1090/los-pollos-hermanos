@@ -70,5 +70,17 @@ router.get("/logout", logout);
 
 router.get("/admin/users", isAuthenticated, authorizeAdmin, getAdminUsers);
 router.get("/admin/stats", isAuthenticated, authorizeAdmin, getAdminStats);
+app.delete("admin/users/:id", async (req, res) => {
+  await User.findByIdAndDelete(req.params.id);
+  res.json({ success: true, message: "User deleted successfully" });
+});
+app.put("/admin/users/:id/toggle", async (req, res) => {
+  const user = await User.findById(req.params.id);
+
+  user.status = user.status === "Active" ? "Suspended" : "Active";
+  await user.save();
+
+  res.json({ success: true, status: user.status });
+});
 
 export default router;

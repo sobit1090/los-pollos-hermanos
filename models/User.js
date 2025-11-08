@@ -6,7 +6,11 @@ const schema = new mongoose.Schema({
     type: String,
     required: true,
   },
-
+ status: {
+    type: String,
+    enum: ["Active", "Suspended"],
+    default: "Active",
+  },
   email: {
     type: String,
     required: true,
