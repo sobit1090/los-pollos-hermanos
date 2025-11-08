@@ -13,7 +13,14 @@ export const myProfile = (req, res) => {
     user: req.user,
   });
 };
-
+export const deleteUser =async(req,res)=>{
+    try {
+    await User.findByIdAndDelete(req.params.id);
+    res.json({ success: true, message: "User deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+}
 /**
  * ✅ Register new user (session will start after login, not here)
  */

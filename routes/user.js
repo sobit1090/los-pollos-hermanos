@@ -1,6 +1,6 @@
 import express from "express";
 import passport from "passport";
-import { User } from "../models/User.js";
+ 
 import { updatePhoto } from "../controllers/user.js";
 import { singleUpload } from "../middlewares/multer.js";
 
@@ -9,6 +9,7 @@ import {
   getAdminUsers,
   logout,
   myProfile,
+  deleteUser,
   loginUser,
   registerUser,
 } from "../controllers/user.js";
@@ -60,14 +61,7 @@ router.get("/logout", logout);
 
 router.get("/admin/users", isAuthenticated, authorizeAdmin, getAdminUsers);
 router.get("/admin/stats", isAuthenticated, authorizeAdmin, getAdminStats);
-router.delete("/admin/users/:id", async (req, res) => {
-  try {
-    await User.findByIdAndDelete(req.params.id);
-    res.json({ success: true, message: "User deleted successfully" });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-});
+router.delete("/admin/users/:id",isAuthenticated, authorizeAdmin, deleteUser);
 
 router.put("/admin/users/:id/toggle", async (req, res) => {
   const user = await User.findById(req.params.id);
