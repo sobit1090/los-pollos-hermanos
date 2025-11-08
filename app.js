@@ -45,8 +45,8 @@ import MongoStore from "connect-mongo"; // or connect-redis for Redis
 
  
 app.use(session({
-  name: "sid",
-  secret: process.env.SESSION_SECRET || "replace_me",
+ 
+  secret: process.env.SESSION_SECRET || "secret",
   resave: false,
   saveUninitialized: false,
   store: MongoStore.create({
@@ -56,13 +56,13 @@ app.use(session({
   cookie: {
     maxAge:   60 * 1000, // 24 hours in ms
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production", // true on HTTPS
-    sameSite: "lax",
+    secure:true, // true on HTTPS
+    sameSite: "none",
   },
 }));
 
 // Logout route (explicit logout)
-app.post("/api/auth/logout", (req, res) => {
+app.post("/api/v1/logout", (req, res) => {
   req.session.destroy(err => {
     res.clearCookie("sid");
     if (err) return res.status(500).send("Logout error");
