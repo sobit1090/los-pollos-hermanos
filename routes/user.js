@@ -33,14 +33,38 @@ router.put("/update/profile-photo", isAuthenticated, singleUpload, updatePhoto);
 // 2) OAuth callback (Google redirects here). We keep your original /login GET.
 router.get(
   "/login",
-  passport.authenticate("google", {
-    failureRedirect:
-      (process.env.FRONTEND_URL || "http://localhost:5173") + "/login",
-    session: true,
-  }),
-  (req, res) => {
-    // success -> redirect to your frontend home (or /profile if you prefer)
-    res.redirect(process.env.FRONTEND_URL || "http://localhost:5173");
+  (req, res, next) => {
+    passport.authenticate("google", (err, user, info) => {
+      // ❶ Duplicate Email (password user trying Google)
+      if (info?.message === "EMAIL_ALREADY_EXISTS_PASSWORD_LOGIN") {
+        return res.redirect(
+          (process.env.FRONTEND_URL || "http://localhost:5173") +
+            "/login?error=EMAIL_ALREADY_EXISTS_PASSWORD_LOGIN"
+        );
+      }
+
+      // ❷ General error
+      if (err || !user) {
+        return res.redirect(
+          (process.env.FRONTEND_URL || "http://localhost:5173") +
+            "/login?error=SOMETHING_WENT_WRONG"
+        );
+      }
+
+      // ❸ Successful login → create session
+      req.logIn(user, (err) => {
+        if (err) {
+          return res.redirect(
+            (process.env.FRONTEND_URL || "http://localhost:5173") +
+              "/login?error=SOMETHING_WENT_WRONG"
+          );
+        }
+
+        return res.redirect(
+          process.env.FRONTEND_URL || "http://localhost:5173"
+        );
+      });
+    })(req, res, next);
   }
 );
 
