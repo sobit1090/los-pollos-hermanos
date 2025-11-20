@@ -4,7 +4,12 @@ export const isAuthenticated = (req, res, next) => {
   if (req.isAuthenticated && req.isAuthenticated()) {
     return next();
   }
-  return next(new ErrorHandler("Not Logged In", 401));
+
+  // 🔥 FIX: return safe not-authenticated response
+  return res.status(200).json({
+    success: false,
+    user: null,
+  });
 };
 
 export const authorizeAdmin = (req, res, next) => {
