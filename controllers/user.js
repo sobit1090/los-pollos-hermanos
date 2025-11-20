@@ -137,7 +137,7 @@ if (user.status === "Suspended") {
     console.error("Login Error:", error);
     return res.status(500).json({ message: "Server error during login" });
   }
-};
+};z
 
 
 /**
@@ -159,7 +159,13 @@ export const logout = (req, res, next) => {
   });
 };
 
- 
+
+
+
+
+
+
+
  export const updatePhoto = async (req, res) => {
   try {
     if (!req.file)
@@ -183,6 +189,9 @@ export const logout = (req, res, next) => {
     res.status(500).json({ message: "Upload failed" });
   }
 };
+
+
+
  
 /**
  * ✅ Admin: Get all users

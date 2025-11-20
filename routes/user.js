@@ -33,33 +33,16 @@ router.put("/update/profile-photo", isAuthenticated, singleUpload, updatePhoto);
 // 2) OAuth callback (Google redirects here). We keep your original /login GET.
 router.get(
   "/login",
-  (req, res, next) => {
-
-    const FRONTEND = (process.env.FRONTEND_URL || "http://localhost:5173")
-      .replace(/\/+$/, "");   // ⭐ removes trailing slash safely
-
-    passport.authenticate("google", (err, user, info) => {
-
-      if (info?.message === "EMAIL_ALREADY_EXISTS_PASSWORD_LOGIN") {
-        return res.redirect(`${FRONTEND}/login?error=EMAIL_ALREADY_EXISTS_PASSWORD_LOGIN`);
-      }
-
-      if (err || !user) {
-        return res.redirect(`${FRONTEND}/login?error=SOMETHING_WENT_WRONG`);
-      }
-
-      req.logIn(user, (err) => {
-        if (err) {
-          return res.redirect(`${FRONTEND}/login?error=SOMETHING_WENT_WRONG`);
-        }
-
-        return res.redirect(FRONTEND); // home
-      });
-
-    })(req, res, next);
+  passport.authenticate("google", {
+    failureRedirect:
+      (process.env.FRONTEND_URL || "http://localhost:5173") + "/login",
+    session: true,
+  }),
+  (req, res) => {
+    // success -> redirect to your frontend home (or /profile if you prefer)
+    res.redirect(process.env.FRONTEND_URL || "http://localhost:5173");
   }
 );
-
 
 /** -------------------- LOCAL AUTH -------------------- **/
 
