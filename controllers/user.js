@@ -137,7 +137,7 @@ if (user.status === "Suspended") {
     console.error("Login Error:", error);
     return res.status(500).json({ message: "Server error during login" });
   }
-};z
+};
 
 
 /**
