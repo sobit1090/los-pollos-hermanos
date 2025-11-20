@@ -62,7 +62,7 @@ router.get("/logout", logout);
 router.get("/admin/users", isAuthenticated, authorizeAdmin, getAdminUsers);
 router.get("/admin/stats", isAuthenticated, authorizeAdmin, getAdminStats);
 router.delete("/admin/users/:id",isAuthenticated, authorizeAdmin, deleteUser);
-router.post("admin/register/addnewuser",isAuthenticated,authorizeAdmin,addNewUser);
+router.post("/admin/register/addnewuser",isAuthenticated,authorizeAdmin,addNewUser);
 router.put("/admin/users/:id/toggle", async (req, res) => {
   const user = await User.findById(req.params.id);
 
