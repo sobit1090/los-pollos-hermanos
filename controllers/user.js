@@ -58,30 +58,22 @@ export const addNewUser = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
 
-    // Validate required fields
     if (!name || !email || !password || !role) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    // Check if email already exists
     const existingUser = await User.findOne({ email });
     if (existingUser)
       return res.status(400).json({ message: "User already exists" });
 
-    // Validate photo upload (optional but recommended)
-  
-
-    // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create user
     const newUser = await User.create({
       name,
       email,
       password: hashedPassword,
       role,
-      photo: "https://i.ibb.co/MBtjqXQ/no-avatar.gif",
- // multer saved filename
+      photo: "https://i.ibb.co/MBtjqXQ/no-avatar.gif", // default placeholder
     });
 
     return res.status(201).json({
@@ -90,10 +82,11 @@ export const addNewUser = async (req, res) => {
       user: newUser,
     });
   } catch (error) {
-    console.error("Add User Error:", error.message);
-    return res.status(500).json({ message: "Internal Server Error" });
+    console.error("Add User Error:", error);
+    return res.status(500).json({ message: error.message || "Server Error" });
   }
 };
+
 
 /**
  * ✅ Login user WITH session + cookie
