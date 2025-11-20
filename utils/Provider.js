@@ -25,24 +25,40 @@ export const connectPassport = () => {
         callbackURL: process.env.GOOGLE_CALLBACK_URL,
       },
       async (accessToken, refreshToken, profile, done) => {
-        try {
-          let user = await User.findOne({ googleId: profile.id });
+  try {
+    const email = profile.emails?.[0]?.value;
 
-          if (!user) {
-            user = await User.create({
-              name: profile.displayName,
-              email: profile.emails?.[0]?.value || `user-${profile.id}@gmail.com`,
-              googleId: profile.id,
-                photo: profile.photos?.[0]?.value || "",
-              password: "google_authenticated_user"
-            });
-          }
+    // Find user by googleId OR email
+    let user = await User.findOne({
+      $or: [{ googleId: profile.id }, { email }],
+    });
 
-          return done(null, user);
-        } catch (err) {
-          return done(err, null);
-        }
-      }
+    // ❌ Case: Email exists but user did NOT sign up with Google
+    if (user && !user.googleId) {
+      return done(null, false, { message: "EMAIL_ALREADY_EXISTS_PASSWORD_LOGIN" });
+    }
+
+    // ✔ Case: Google user exists → login
+    if (user) {
+      return done(null, user);
+    }
+
+    // ✔ Case: Create new Google user
+    user = await User.create({
+      name: profile.displayName,
+      email: email,
+      googleId: profile.id,
+      photo: profile.photos?.[0]?.value || "",
+      password: "google_authenticated_user",
+      authType: "google",
+    });
+
+    return done(null, user);
+  } catch (err) {
+    return done(err, null);
+  }
+}
+
     )
   );
 };
