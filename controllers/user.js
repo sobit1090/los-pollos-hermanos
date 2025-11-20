@@ -69,9 +69,7 @@ export const addNewUser = async (req, res) => {
       return res.status(400).json({ message: "User already exists" });
 
     // Validate photo upload (optional but recommended)
-    if (!req.file) {
-      return res.status(400).json({ message: "Photo is required" });
-    }
+  
 
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -82,7 +80,8 @@ export const addNewUser = async (req, res) => {
       email,
       password: hashedPassword,
       role,
-      photo: req.file.filename, // multer saved filename
+      photo: "https://i.ibb.co/MBtjqXQ/no-avatar.gif",
+ // multer saved filename
     });
 
     return res.status(201).json({
